@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const WebSocket = require('ws')
+
 const PORT = 80
 const ADDRESS = "localhost"
 const URL = ADDRESS + ':' + PORT
@@ -16,55 +17,67 @@ var games = 0
 
 wss.on('connection', (ws) => {
 	console.log("[ WS ] New connection")
-	clients.push({ "con": ws, "stat": undefined })
-	// undefined means waiting
-	// if a number means game number
 
-	a = findGamePartners(ws)
-	console.log(ws.id)
-	if (a != undefined)
-		console.log(a[0], a[1], a[2])
+	// add client to database
+	var uniq_id = Date.now()
+	clients.push({ con: ws, stat: undefined, id: uniq_id })
+	ws.send(uniq_id)
+	// check if game available for client
+	var a = findFriendFor(wss, uniq_id)
+	if (a != undefined) {
+		console.log("Match between:" + uniq_id + ' ' + a.id + ' game:' + games)
+		getClient(uniq_id).stat = games
+		getClient(a.id).stat = games
+		games++
+	}
 
-	// ws.on('error', console.error)
-	// ws.on('message', (data) => {
-	// 	ws.send('somethingelse')
-	// })
+	ws.on('error', console.error)
+	ws.on('message', (data) => {
+		console.log(data.toString())
+	})
 
 	ws.on('close', (ws) => {
-		console.log("[ WS ] A connection closed")
-
-		for (var client in clients) { // remove client
-			if (client.con == ws) {
-				if (client.stat != undefined)
-					delete clients[getGamePartner()]
-				delete clients[client]
-			}
-		}
-		findGamePartners()
+		console.log("[ WS ] A connection was closed")
+		removeAlonePlayer(ws)
+		printAll()
 	})
 })
 
-function findGamePartners(ws = undefined) {
-	var pair = []
-	if (ws != undefined)
-		pair.push(ws)
-
-	for (var client in clients) {
-		if (client.stat == undefined && client != ws) {
-			if (pair.length < 2)
-				pair.push(client)
-			else {
-				pair.push(games++)
-				return pair
-			}
-		}
+function removeAlonePlayer(a) {
+	for (var i in clients) {
+		console.log(clients[i].con == a)
+		console.log(clients[i].isAlive)
+		console.log(a.isAlive)
 	}
+	// for (var i in clients) {
+	// 	if (clients[i + 1] != undefined)
+	// 		if (clients[i].stat != clients[i + 1].stat) {
+	// 			clients.pop(clients[i])
+	// 			console.log(clients[i].id)
+	// 		}
+	// 	i++
+	// }
 }
 
-function getGamePartner(client) {
-	for (var i in clients) {
-		if (client.stat == i.stat)
-			return i
-	}
+function findFriendFor(wss, uniq_id) {
+	// for (var i in clients)
+	// 	if (clients[i].stat == undefined && clients[i].id != uniq_id)
+	// 		return clients[i]
+	// return undefined
+	if (clients.length > 1 && clients[clients.length - 2].stat == undefined)
+		return clients[clients.length - 2]
 	return undefined
+}
+
+function getClient(uniq_id) {
+	for (var i in clients)
+		if (clients[i].id == uniq_id)
+			return clients[i]
+	return undefined
+}
+
+function printAll() {
+	for (var i in clients) {
+		console.log(clients[i].id, clients[i].stat)
+	}
 }
