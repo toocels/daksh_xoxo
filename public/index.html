@@ -1,12 +1,33 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>XOXO</title>
 	<link rel="icon" type="image/x-icon" href="/fav.png">
+	<link rel="stylesheet" type="text/css" href="/styles.css">
 </head>
+
 <body>
-	Imagine there is a game here
-	<button>Quit</button>
+	<div class="all">
+		<div>Enter your name: <input type="text" name=""></div>
+		<button onclick="ready()" class="start_buttom">start</button>
+		<img src="/loading-gif.gif" class="loading-gif">
+		<div class="opponent">You are playing against:</div>
+		<div class="you">You are playing against:</div>
+		<div class="turn_stat"></div>
+		<div class="board">
+			<div class="cell" onclick="cell_click(0)"></div>
+			<div class="cell" onclick="cell_click(1)"></div>
+			<div class="cell" onclick="cell_click(2)"></div>
+			<div class="cell" onclick="cell_click(3)"></div>
+			<div class="cell" onclick="cell_click(4)"></div>
+			<div class="cell" onclick="cell_click(5)"></div>
+			<div class="cell" onclick="cell_click(6)"></div>
+			<div class="cell" onclick="cell_click(7)"></div>
+			<div class="cell" onclick="cell_click(8)"></div>
+		</div>
+	</div>
 </body>
 <script type="text/javascript" src="/script.js"></script>
+
 </html>

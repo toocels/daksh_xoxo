@@ -58,6 +58,7 @@ wss.on('connection', (ws) => {
 		// remove connected client and parter
 		var p1 = clients.find(client => client.con == ws)
 		var p2 = clients.find(client => client.stat == p1['stat'] && client.id != p1.id)
+		p1.con.send(JSON.stringify({ "purpose": "close" }))
 		if (p2 != undefined)
 			p2.con.close()
 
