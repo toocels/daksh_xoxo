@@ -17,7 +17,7 @@ var games = 0
 var idd = 10;
 
 wss.on('connection', (ws) => {
-	console.log("[ WS ] New connection")
+	console.log("[ WS ]   New connection")
 
 	// add client to database
 	// var uniq_id = Date.now()
@@ -26,31 +26,38 @@ wss.on('connection', (ws) => {
 	ws.send(uniq_id)
 
 	// check if game available for client
-	var a = findFriendFor(ws)
-	if (a != undefined) {
-		console.log("Match between:" + uniq_id + ' ' + a.id + ' game:' + games)
-		getClient(uniq_id).stat = games
-		getClient(a.id).stat = games
+	// if yes, give them stat
+	var p1 = clients.find(client => client.stat == undefined && client.id != uniq_id)
+	if (p1 != undefined) {
+		console.log("[ GAME ] Match between:" + uniq_id + ' ' + p1.id + ' game:' + games)
+		var p2 = clients[clients.length - 1]
+		p1.stat = games;
+		p2.stat = games;
+		p1['con'].send(JSON.stringify({ "you_are": 'X' }))
+		p2['con'].send(JSON.stringify({ "you_are": 'O' }))
 		games++
 	}
 
 	ws.on('error', console.error)
 	ws.on('message', (data) => {
-		// console.log(data.toString())
+		data = JSON.parse(data.toString())
+		if (data['i_play'] != undefined) {
+
+		}
 	})
 
 	ws.on('close', _ => {
-		console.log("[ WS ] A connection was closed")
+		console.log("[ WS ]   A connection was closed")
 
 		// remove connected client and partnet
-		var a = getClient(ws, "con")
-		console.log("game ended for", a['id'])
-		var st = a['stat'];
-		clients.splice(clients.indexOf(a), 1);
-		var b = getClient(st, "stat")
-		if (b != undefined)
-			b.con.close()
+		var p1 = clients.find(client => client.con == ws)
+		console.log("[ GAME ] game ended for", p1['id'])
 
+		var p2 = clients.find(client => client.stat == p1['stat'])
+		if (p2 != undefined)
+			p2.con.close()
+
+		clients.splice(clients.indexOf(p1), 1);
 	})
 })
 
@@ -61,9 +68,11 @@ function findFriendFor(wss, uniq_id) {
 }
 
 function getClient(ident, parm = "id") {
-	for (var i in clients)
-		if (clients[i][parm] == ident)
+	for (var i in clients) {
+		if (clients[i][parm] == ident) {
 			return clients[i]
+		}
+	}
 	return undefined
 }
 
