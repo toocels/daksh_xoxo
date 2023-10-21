@@ -14,17 +14,6 @@ body {
 	min-height: 100vh;
 }
 
-/*.cell {
-	display: inline-block;
-	height: 50px;
-	width: 50px;
-	margin: auto;
-	margin-bottom: 4px;
-	padding: 10px;
-	background-color: grey;
-	text-align: center;
-}*/
-
 .all {
 	text-align: center;
 	display: flex;
@@ -46,17 +35,15 @@ body {
 
 .board {
 	display: grid;
-	grid-template-columns: repeat(3, 100px);
-	grid-template-rows: repeat(3, 100px);
+	grid-template-columns: repeat(3, 70px);
+	grid-template-rows: repeat(3, 70px);
 	grid-gap: 5px;
-	width: 310px;
-	height: 310px;
 	margin: 0 auto;
 }
 
 .cell {
-	width: 100px;
-	height: 100px;
+	width: 70px;
+	height: 70px;
 	border: 2px solid #000;
 	display: flex;
 	justify-content: center;
