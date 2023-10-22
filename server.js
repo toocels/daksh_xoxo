@@ -22,7 +22,7 @@ wss.on('connection', (ws) => {
 	// add client to database
 	var current_id = idd++; // Date.now()
 	clients.push({ con: ws, stat: undefined, id: current_id })
-	ws.send(current_id)
+	// ws.send(current_id)
 
 	// check if game available for client, if yes, give them stat
 	var p1 = clients[clients.length - 1]
@@ -58,9 +58,10 @@ wss.on('connection', (ws) => {
 		// remove connected client and parter
 		var p1 = clients.find(client => client.con == ws)
 		var p2 = clients.find(client => client.stat == p1['stat'] && client.id != p1.id)
-		p1.con.send(JSON.stringify({ "purpose": "close" }))
-		if (p2 != undefined)
+		if (p2 != undefined) {
+			p2.con.send(JSON.stringify({ "purpose": "game_over" }))
 			p2.con.close()
+		}
 
 		console.log("[ GAME ] Game ended for", p1['id'])
 		clients.splice(clients.indexOf(p1), 1);

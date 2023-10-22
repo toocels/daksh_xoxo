@@ -11,27 +11,8 @@ body {
 	overflow-x: hidden;
 	/*background-color: #0d0d0d;*/
 	scroll-behavior: smooth;
-	min-height: 100vh;
 }
 
-.all {
-	text-align: center;
-	display: flex;
-	flex-flow: column;
-	width: 200px;
-	margin: auto;
-}
-
-.loading-gif {
-	max-height: 20px;
-	max-width: 20px;
-}
-
-.you,
-.turn_stat,
-.loading-gif {
-	display: none;
-}
 
 .board {
 	display: grid;
@@ -50,4 +31,21 @@ body {
 	align-items: center;
 	font-size: 24px;
 	cursor: pointer;
+}
+
+body {
+	text-align: center;
+	display: flex;
+	flex-flow: column;
+	margin: auto;
+	width: 500px;
+	margin-top: 100px;
+}
+
+.start_button{
+	margin: 20px;
+}
+
+.visibility{
+	display: none;
 }
