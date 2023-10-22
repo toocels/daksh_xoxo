@@ -8,7 +8,8 @@ setTimeout(() => {
 
 document.querySelector('.name_box').value = ["Mike", "Jack", "Bob", "Adam", "Eve"][Math.floor(Math.random() * 5)];
 
-[".loading-gif", ".opponent", ".you", ".turn_stat", ".result"].forEach(item => document.querySelector(item).style.display = "none")
+[".loading-gif", ".opponent", ".you", ".turn_stat", ".winLine"].forEach(item => document.querySelector(item).style.display = "none")
+document.querySelector('.result').innerHTML = ""
 
 function ready() {
 	if (socket != undefined)
@@ -16,7 +17,9 @@ function ready() {
 	socket = new WebSocket("ws://" + window.location.hostname);
 
 	document.querySelector(".loading-gif").style.display = "block";
-	[".opponent", ".you", ".turn_stat", ".result"].forEach(item => document.querySelector(item).style.display = "none")
+	document.querySelector('.winLine').style.display = "none";
+	[".opponent", ".you", ".turn_stat"].forEach(item => document.querySelector(item).style.display = "none")
+	document.querySelector('.result').innerHTML = ""
 	document.querySelector('.start_button').disabled = true
 	socket.addEventListener("message", (event) => {
 		msg = JSON.parse(event.data)
@@ -54,7 +57,6 @@ function ready() {
 				checkGameEnd()
 				break;
 			case "game_over":
-				document.querySelector('.result').style.display = "block";
 				document.querySelector('.result').innerHTML = "YOU WON, Opponent left match"
 				document.querySelector('.start_button').innerHTML = "Another Game"
 				document.querySelector('.start_button').disabled = false
@@ -89,10 +91,27 @@ function checkWinner() {
 		[0, 4, 8],
 		[2, 4, 6]
 	];
-	const winningCombinationsAns = []
-	for (const combo of winningCombinations)
-		if (cells[combo[0]].textContent && cells[combo[0]].textContent == cells[combo[1]].textContent && cells[combo[0]].textContent == cells[combo[2]].textContent)
+	const winningCombinationsAns = [
+		["translate(105px, -65px) rotate(90deg)", "200px"],
+		["translate(105px, 10px) rotate(90deg)", "200px"],
+		["translate(105px, 85px) rotate(90deg)", "200px"],
+		["translate(30px, 10px)", "200px"],
+		["translate(105px, 10px)", "200px"],
+		["translate(180px, 10px)", "200px"],
+		["translate(105px, -10px) rotate(-45deg)", "250px"],
+		["translate(105px, -10px) rotate(45deg)", "250px"]
+	]
+	// for (const combo of winningCombinations)
+	// 	if (cells[combo[0]].textContent && cells[combo[0]].textContent == cells[combo[1]].textContent && cells[combo[0]].textContent == cells[combo[2]].textContent)
+	// 		return cells[combo[0]].textContent;
+	for (const combo in winningCombinations) {
+		if (cells[winningCombinations[combo][0]].textContent && cells[winningCombinations[combo][0]].textContent == cells[winningCombinations[combo][1]].textContent && cells[winningCombinations[combo][0]].textContent == cells[winningCombinations[combo][2]].textContent) {
+			document.querySelector('.winLine').style.display = "block"
+			document.querySelector('.winLine').style.transform = winningCombinationsAns[combo][0]
+			document.querySelector('.winLine').style.height = winningCombinationsAns[combo][1]
 			return cells[combo[0]].textContent;
+		}
+	}
 	for (var cell of cells)
 		if (cell.textContent == "")
 			return false;
@@ -100,17 +119,19 @@ function checkWinner() {
 }
 
 function checkGameEnd() {
-	if (checkWinner()) {
-		document.querySelector('.result').style.display = "block";
-		document.querySelector('.board').style.opacity = "0.3";
-		if (checkWinner() == my_symbol)
-			document.querySelector('.result').innerHTML = "YOU WON"
-		else if (checkWinner() == "-")
-			document.querySelector('.result').innerHTML = "its a draw"
-		else
-			document.querySelector('.result').innerHTML = "YOU LOST LOOOSER"
-		socket.close();
-		document.querySelector('.start_button').innerHTML = "Another Game"
-		document.querySelector('.start_button').disabled = false
-	}
+	if (!checkWinner())
+		return;
+
+	document.querySelector('.board').style.opacity = "0.3";
+	document.querySelector('.start_button').innerHTML = "Another Game"
+	document.querySelector('.start_button').disabled = false
+	var result = document.querySelector('.result')
+	if (checkWinner() == my_symbol)
+		result.innerHTML = "YOU WON"
+	else if (checkWinner() == "-")
+		result.innerHTML = "Its a DRAW"
+	else
+		result.innerHTML = "YOU LOST LOOOSER"
+	socket.close();
+
 }
