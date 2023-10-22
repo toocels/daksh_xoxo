@@ -1,1 +1,1 @@
-Run and tested only in linux, manjaro.
+This is a Tic-Tac-Toe

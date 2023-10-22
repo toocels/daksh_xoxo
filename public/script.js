@@ -2,6 +2,10 @@ var my_turn = false;
 var my_symbol = "X"
 var socket = undefined;
 
+setTimeout(() => {
+	ready()
+}, 100)
+
 document.querySelector('.name_box').value = ["Mike", "Jack", "Bob", "Adam", "Eve"][Math.floor(Math.random() * 5)];
 
 [".loading-gif", ".opponent", ".you", ".turn_stat", ".result"].forEach(item => document.querySelector(item).style.display = "none")
@@ -16,7 +20,6 @@ function ready() {
 	document.querySelector('.start_button').disabled = true
 	socket.addEventListener("message", (event) => {
 		msg = JSON.parse(event.data)
-		console.log(msg['purpose'])
 		switch (msg['purpose']) {
 			case "game_found":
 				document.querySelector(".loading-gif").style.display = "none";
@@ -79,18 +82,19 @@ function checkWinner() {
 	const winningCombinations = [
 		[0, 1, 2],
 		[3, 4, 5],
-		[6, 7, 8], // Rows
+		[6, 7, 8],
 		[0, 3, 6],
 		[1, 4, 7],
-		[2, 5, 8], // Columns
+		[2, 5, 8],
 		[0, 4, 8],
-		[2, 4, 6] // Diagonals
+		[2, 4, 6]
 	];
+	const winningCombinationsAns = []
 	for (const combo of winningCombinations)
 		if (cells[combo[0]].textContent && cells[combo[0]].textContent == cells[combo[1]].textContent && cells[combo[0]].textContent == cells[combo[2]].textContent)
 			return cells[combo[0]].textContent;
-	for (var i in cells)
-		if (cells[i].textContent == "")
+	for (var cell of cells)
+		if (cell.textContent == "")
 			return false;
 	return "-";
 }
