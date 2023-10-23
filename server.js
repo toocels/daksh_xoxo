@@ -1,32 +1,30 @@
-const express = require('express')
-const app = express()
-const WebSocket = require('ws')
+require('dotenv').config();
+const express = require('express');
+const app = express();
+const WebSocket = require('ws');
 
-const PORT = 80
-const ADDRESS = "localhost"
-const URL = ADDRESS + ':' + PORT
+const PORT = process.env.PORT;
+const ADDRESS = process.env.ADDRESS;
 
-app.use(express.static('public'))
+app.use(express.static('public'));
 const server = app.listen(PORT, ADDRESS, _ => {
-	console.log("Server listening on " + URL)
+	console.log("Server listening on " + ADDRESS + ':' + PORT);
 })
 
-let wss = new WebSocket.Server({ server })
-let clients = []
-let games = 0
-let idd = 10;
-
+const wss = new WebSocket.Server({ server })
+let clients = [];
+let games = 0;
 wss.on('connection', (ws) => {
-	console.log("[ WS ]   New connection")
+	console.log("[ WS ]   New connection");
 
 	// add client to database
-	let current_id = Date.now()
-	let p1 = { con: ws, stat: undefined, id: current_id }
-	let p2 = clients.find(client => client.stat == undefined)
-	clients.push(p1)
+	let current_id = Date.now();
+	let p1 = { con: ws, stat: undefined, id: current_id };
+	let p2 = clients.find(client => client.stat == undefined);
+	clients.push(p1);
 
 	// check if game available for client, if yes, give them stat [ stat == undefined => not in a game, stat == number => in a game]
-	if (p2 != undefined) {
+	if (p2) {
 		let r = Math.random() > 0.5;
 		p1.stat = games;
 		p2.stat = games;
@@ -37,9 +35,9 @@ wss.on('connection', (ws) => {
 
 	ws.on('error', console.error)
 	ws.on('message', (data) => {
-		data = JSON.parse(data.toString())
-		let p1 = clients.find(client => client.con == ws)
-		let p2 = clients.find(client => client.stat == p1.stat && client.id != p1.id)
+		data = JSON.parse(data.toString());
+		let p1 = clients.find(client => client.con == ws);
+		let p2 = clients.find(client => client.stat == p1.stat && client.id != p1.id);
 
 		// mostly just forwarding data between p1 and p2
 		switch (data['purpose']) {
@@ -54,13 +52,13 @@ wss.on('connection', (ws) => {
 
 	ws.on('close', _ => {
 		// remove connected client and parter
-		let p1 = clients.find(client => client.con == ws)
-		let p2 = clients.find(client => client.stat == p1.stat && client.id != p1.id)
-		if (p2 != undefined) {
-			p2.con.send(JSON.stringify({ "purpose": "game_over" }))
-			p2.con.close()
+		let p1 = clients.find(client => client.con == ws);
+		let p2 = clients.find(client => client.stat == p1.stat && client.id != p1.id);
+		if (p2) {
+			p2.con.send(JSON.stringify({ "purpose": "game_over" }));
+			p2.con.close();
 		}
 		clients.splice(clients.indexOf(p1), 1);
-		console.log("[ WS ]   A connection was closed")
+		console.log("[ WS ]   A connection was closed");
 	})
 })

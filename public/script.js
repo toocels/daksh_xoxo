@@ -2,17 +2,14 @@ let my_turn = false;
 let my_symbol = "X"
 let socket = undefined;
 
-// setTimeout(() => {
-// 	ready()
-// }, 500)
 document.querySelector('.name_box').value = ["Mike", "Jack", "Bob", "Adam", "Eve"][Math.floor(Math.random() * 5)];
 
 function ready() {
-	if (socket != undefined)
+	if (socket)
 		socket.close()
 	socket = new WebSocket("ws://" + window.location.hostname);
 
-	document.querySelector(".loading-gif").style.display = "block";
+	document.querySelector(".loading_gif").style.display = "block";
 	document.querySelector('.start_button').disabled = true
 
 	socket.addEventListener("message", (event) => {
@@ -22,11 +19,11 @@ function ready() {
 				my_symbol = msg['data']['you_are']
 				my_turn = msg['data']['you_are'] == "X"
 
-				document.querySelector(".loading-gif").style.display = "none";
-				document.querySelector(".you").style.display = "block"
+				document.querySelector(".loading_gif").style.display = "none";
+				document.querySelector(".your_stat").style.display = "block"
 				document.querySelector('.winLine').style.display = "none";
 				document.querySelector('.board').style.opacity = my_turn ? "1" : "0.3";
-				document.querySelector('.you').textContent = "You are playing: " + my_symbol
+				document.querySelector('.your_stat').textContent = "You are playing: " + my_symbol
 				document.querySelector('.turn_stat').textContent = my_turn ? "Your Turn" : "Opponents Turn"
 				document.querySelector('.result').innerHTML = ""
 				document.querySelectorAll('.cell').forEach(i => i.textContent = "")
@@ -39,8 +36,8 @@ function ready() {
 				}))
 				break;
 			case "my_name":
-				document.querySelector(".opponent").style.display = "block"
-				document.querySelector(".opponent").textContent = "You Opponent is: " + msg['data']['name']
+				document.querySelector(".opponent_stat").style.display = "block"
+				document.querySelector(".opponent_stat").textContent = "You Opponent is: " + msg['data']['name']
 				break;
 			case "i_play":
 				my_turn = !my_turn

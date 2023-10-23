@@ -8,27 +8,29 @@
 </head>
 
 <body>
-	<div>Enter your name: <input type="text" name="" class="name_box"></div>
-
-	<button onclick="ready()" class="start_button">Start game</button>
-	<div><img src="/loading-gif.gif" height="30px" width="30px" class="loading-gif"></div>
-	<div class="opponent">You are playing against:</div>
-	<div class="you">You are playing symbol:</div>
-	<br>
-	<div class="turn_stat"></div>
-	<div class="board">
-		<div class="cell" onclick="cell_click(0)"></div>
-		<div class="cell" onclick="cell_click(1)"></div>
-		<div class="cell" onclick="cell_click(2)"></div>
-		<div class="cell" onclick="cell_click(3)"></div>
-		<div class="cell" onclick="cell_click(4)"></div>
-		<div class="cell" onclick="cell_click(5)"></div>
-		<div class="cell" onclick="cell_click(6)"></div>
-		<div class="cell" onclick="cell_click(7)"></div>
-		<div class="cell" onclick="cell_click(8)"></div>
-		<span class="winLine"></span>
-	</div>
-	<div class="result"></div>
+	<main>
+		<div>Enter your name: <input type="text" name="" class="name_box"></div>
+		<button onclick="ready()" class="start_button">Start game</button>
+		<div><img src="/loading-gif.gif" height="30px" width="30px" class="loading_gif"></div>
+		<div>
+			<div class="opponent_stat"></div>
+			<div class="your_stat"></div>
+		</div>
+		<div class="turn_stat"></div>
+		<div class="board">
+			<div class="cell" onclick="cell_click(0)"></div>
+			<div class="cell" onclick="cell_click(1)"></div>
+			<div class="cell" onclick="cell_click(2)"></div>
+			<div class="cell" onclick="cell_click(3)"></div>
+			<div class="cell" onclick="cell_click(4)"></div>
+			<div class="cell" onclick="cell_click(5)"></div>
+			<div class="cell" onclick="cell_click(6)"></div>
+			<div class="cell" onclick="cell_click(7)"></div>
+			<div class="cell" onclick="cell_click(8)"></div>
+			<div class="winLine"></div>
+		</div>
+		<div class="result"></div>
+	</main>
 </body>
 <script type="text/javascript" src="/script.js"></script>
 
